@@ -32,7 +32,6 @@
 //	return 4 * M_PI * pow((m / (2 * M_PI * k * T)), 3 / 2) * pow(v, 2) * exp(-m * v * v / (2 * k * T));
 //}
 
-
 double pdf(const double v, const double m, const double T)
 {
 	return 4 * M_PI * pow((m / (2 * M_PI * BOLTZMANN_CONSTANT * T)), 3 / 2) * pow(v, 2) * exp(-m * v * v / (2 * BOLTZMANN_CONSTANT * T));
@@ -43,7 +42,7 @@ PerformanceComputing::MaxwellParticleDistribution::MaxwellParticleDistribution(i
 	this->smallest = smallest;
 	this->largest = largest;
 	this->processor_count = 2;
-	this->count = ceil((pow(99, 3) / this->processor_count) + 0.5);
+	this->count = ceil((pow(99, 3) / this->processor_count));
 }
 
 PerformanceComputing::MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
