@@ -5,10 +5,8 @@
 #include <ppltasks.h>
 #include <functional>
 #include <ppl.h>
-#include <concrt.h>
 #include <vector>
 #include <utility>
-#include <array>
 
 //double carbon_pdf(double v)
 //{
