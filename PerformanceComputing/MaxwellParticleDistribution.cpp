@@ -82,7 +82,7 @@ void PerformanceComputing::MaxwellParticleDistribution::DistributionElectrons()
 			return discrete_electrons;
 		});
 	}
-	auto heliums = concurrency::when_all(begin(tasks_electrons), end(tasks_electrons)).then([this](std::vector<int> result)
+	concurrency::when_all(begin(tasks_electrons), end(tasks_electrons)).then([this](std::vector<int> result)
 	{
 		this->electrons = ref new Platform::Collections::Vector<int>(std::move(result));
 	}).wait();
@@ -138,7 +138,7 @@ void PerformanceComputing::MaxwellParticleDistribution::DistributionHeliums()
 			return discrete_heliums;
 		});
 	}
-	auto heliums = concurrency::when_all(begin(tasks_heliums), end(tasks_heliums)).then([this](std::vector<int> result)
+	concurrency::when_all(begin(tasks_heliums), end(tasks_heliums)).then([this](std::vector<int> result)
 	{
 		this->heliums = ref new Platform::Collections::Vector<int>(std::move(result));
 	}).wait();
