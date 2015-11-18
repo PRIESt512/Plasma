@@ -1,8 +1,8 @@
 ﻿#pragma once
+#include "Particle.h"
 
 namespace PerformanceComputing
 {
-
 	public ref class MaxwellParticleDistribution sealed
 	{
 	public:
@@ -20,24 +20,25 @@ namespace PerformanceComputing
 		void DistributionHeliums();
 
 		property Windows::Foundation::Collections::IVector<int>^ Electrons {
-			Windows::Foundation::Collections::IVector<int>^ get() { return electrons; }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _electrons; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Heliums {
-			Windows::Foundation::Collections::IVector<int>^ get() { return heliums; }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _heliums; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Carbons {
-			Windows::Foundation::Collections::IVector<int>^ get() { return carbons; }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _carbons; }
 		}
 
 	private:
-		Platform::Collections::Vector<int>^ electrons;
-		Platform::Collections::Vector<int>^ heliums;
-		Platform::Collections::Vector<int>^ carbons;
+		Platform::Collections::Vector<int>^ _electrons;
+		Platform::Collections::Vector<int>^ _heliums;
+		Platform::Collections::Vector<int>^ _carbons;
+		Platform::Collections::Vector<Particle, equal_particle>^ red;
 
-		int largest;
-		int smallest;
-		int processor_count;
-		int count;
-		const int size = 99;
+		int _largest;
+		int _smallest;
+		int _processor_count;
+		int _count;
+		const int _size = 99;
 	};
 }

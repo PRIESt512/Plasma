@@ -2,15 +2,22 @@
 #include "pch.h"
 namespace PerformanceComputing
 {
-	public value struct Particle
+	value struct Particle
 	{
 		int x;
 		int y;
 		int z;
-		int Vx;
-		int Vy;
-		int Vz;
-			
+		double Vx;
+		double Vy;
+		double Vz;
+	};
+
+	struct equal_particle
+	{
+		bool operator()(const Particle& p1, const Particle& p2) const
+		{
+			return p1.x == p2.x;
+		}
 	};
 }
 

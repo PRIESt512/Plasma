@@ -15,7 +15,6 @@ using Windows.UI.Xaml.Navigation;
 using OxyPlot;
 using OxyPlot.Series;
 using PerformanceComputing;
-
 // Документацию по шаблону элемента "Пустая страница" см. по адресу http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace Plasma
@@ -29,16 +28,18 @@ namespace Plasma
         {
             this.InitializeComponent();
         }
-        
+
         private async void Button_Click(object sender, RoutedEventArgs r)
         {
 
             MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
-           // maxwell.DistributionHeliums();
-            await maxwell.DistributionParticleAsync();
-            var e = maxwell.Electrons.Count;
-            var h = maxwell.Heliums.Count;
-            var c = maxwell.Carbons.Count;
+            //await maxwell.DistributionParticleAsync();
+            //var e = maxwell.Electrons.Count;
+            //var h = maxwell.Heliums.Count;
+            //var c = maxwell.Carbons.Count;
+
+            SpeedParticle speedParticle = new SpeedParticle();
+            await speedParticle.SpeedCompare();
         }
     }
 

@@ -219,6 +219,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="MaxwellParticleDistribution.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SpeedParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -230,6 +231,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MaxwellParticleDistribution.cpp" />
+    <ClCompile Include="SpeedParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PerformanceComputing.rc" />
