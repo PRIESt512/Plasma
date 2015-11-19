@@ -33,13 +33,13 @@ namespace Plasma
         {
 
             MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
-            //await maxwell.DistributionParticleAsync();
-            //var e = maxwell.Electrons.Count;
-            //var h = maxwell.Heliums.Count;
-            //var c = maxwell.Carbons.Count;
+            await maxwell.DistributionParticleAsync();
+            var e = maxwell.Electrons.Count;
+            var h = maxwell.Heliums.Count;
+            var c = maxwell.Carbons.Count;
 
-            SpeedParticle speedParticle = new SpeedParticle();
-            await speedParticle.SpeedCompare();
+            //SpeedParticle speedParticle = new SpeedParticle();
+            //await speedParticle.SpeedCompare();
         }
     }
 

@@ -11,7 +11,7 @@ namespace PerformanceComputing
 			Windows::Foundation::Collections::IVectorView<Particle>^ get() { return _speedParticle.GetView(); }
 		}*/
 
-		Windows::Foundation::IAsyncAction^ SpeedCompare();
+		//Windows::Foundation::IAsyncAction^ SpeedCompare();
 
 	private:
 		//Platform::Collections::Vector<Particle, equal_particle> _speedParticle;

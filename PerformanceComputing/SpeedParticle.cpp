@@ -10,7 +10,7 @@ namespace PerformanceComputing
 	{
 
 	}
-	Windows::Foundation::IAsyncAction^ SpeedParticle::SpeedCompare()
+	/*Windows::Foundation::IAsyncAction^ SpeedParticle::SpeedCompare()
 	{
 		return concurrency::create_async([]() {
 			MaxwellParticleDistribution^ distribution = ref new MaxwellParticleDistribution(0, 7000);
@@ -40,5 +40,5 @@ namespace PerformanceComputing
 				speedCarbons.push_back(p);
 			}
 		});
-	}
+	}*/
 }
