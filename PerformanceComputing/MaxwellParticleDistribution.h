@@ -1,8 +1,15 @@
 ﻿#pragma once
-#include "Particle.h"
+#include "Constant.h"
+#include <random>
+#include <ppltasks.h>
+#include <functional>
+#include <ppl.h>
+#include <vector>
+#include <utility>
 
 namespace Native
 {
+	//Нативный класс для расчета распределения Максвелла
 	class MaxwellParticleDistribution
 	{
 	public:
@@ -17,17 +24,25 @@ namespace Native
 		std::vector<int> _heliums;
 		std::vector<int> _carbons;
 
+		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_electron();
+		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_helium();
+		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_carbon();
+
 	private:
+		std::function<double(const double)> _electron_pdf;
+		std::function<double(const double)> _carbon_pdf;
+		std::function<double(const double)> _helium_pdf;
+
 		int _largest;
 		int _smallest;
 		int _processor_count;
 		int _count;
-		const int _size = 99;
 	};
 }
 
 namespace PerformanceComputing
 {
+	//Управляемая оболочка для нативного класса С++/СХ, позволяет взаимодействовать C# с неуправляемым кодом 
 	public ref class MaxwellParticleDistribution sealed
 	{
 	public:
@@ -40,13 +55,13 @@ namespace PerformanceComputing
 		Windows::Foundation::IAsyncAction^ DistributioHeliumsAsync();
 
 		property Windows::Foundation::Collections::IVector<int>^ Electrons {
-			Windows::Foundation::Collections::IVector<int>^ get() { return ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_electrons)); }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _electrons; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Heliums {
-			Windows::Foundation::Collections::IVector<int>^ get() { return ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_heliums)); }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _carbons; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Carbons {
-			Windows::Foundation::Collections::IVector<int>^ get() { return ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_carbons)); }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _heliums; }
 		}
 
 	private:
@@ -54,6 +69,5 @@ namespace PerformanceComputing
 		Platform::Collections::Vector<int>^ _electrons;
 		Platform::Collections::Vector<int>^ _heliums;
 		Platform::Collections::Vector<int>^ _carbons;
-		Platform::Collections::Vector<Particle, equal_particle>^ red;
 	};
 }

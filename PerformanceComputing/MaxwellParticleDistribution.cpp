@@ -1,12 +1,6 @@
 ﻿#include "pch.h"
 #include "MaxwellParticleDistribution.h"
-#include "Constant.h"
-#include <random>
-#include <ppltasks.h>
-#include <functional>
-#include <ppl.h>
-#include <vector>
-#include <utility>
+
 
 //double carbon_pdf(double v)
 //{
@@ -37,128 +31,156 @@ inline double pdf(const double v, const double m, const double T)
 	return 4 * M_PI * pow((m / (2 * M_PI * BOLTZMANN_CONSTANT * T)), 3 / 2) * pow(v, 2) * exp(-m * v * v / (2 * BOLTZMANN_CONSTANT * T));
 }
 
-Native::MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest)
-	:_smallest(smallest), _largest(largest), _processor_count(2)
+namespace Native
 {
-	_count = ceil((pow(99, 3) / this->_processor_count));
-}
-
-Native::MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
-	: _smallest(smallest), _largest(largest), _processor_count(processor_count)
-{
-	_count = ceil((pow(99, 3) / this->_processor_count));
-}
-
-void Native::MaxwellParticleDistribution::DistributionElectrons()
-{
-	std::function<double(const double)> electron_pdf(std::bind(pdf, std::placeholders::_1, ELECTRONS_MASS, ELECTRONS_TEMPERATURE));
-	std::vector<concurrency::task<std::vector<int>>> tasks_electrons(_processor_count);
-	std::discrete_distribution<> discrete_temp(this->_largest, 0, this->_largest, electron_pdf);
-	concurrency::combinable<std::discrete_distribution<>> discrete = concurrency::combinable<std::discrete_distribution<>>([&]()->std::discrete_distribution<>
-	{return discrete_temp; });
-
-	for (size_t i = 0; i < _processor_count; i++)
+	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest)
+		:_smallest(smallest), _largest(largest), _processor_count(2)
 	{
-		tasks_electrons[i] = concurrency::create_task([&, this]() -> std::vector<int>
+		_count = ceil((pow(SIZE_MOD, 3) / this->_processor_count));
+
+		_electron_pdf = std::bind(pdf, std::placeholders::_1, ELECTRONS_MASS, ELECTRONS_TEMPERATURE);
+		_carbon_pdf = std::bind(pdf, std::placeholders::_1, CARBONS_MASS, CARBONS_TEMPERATURE);
+		_helium_pdf = std::bind(pdf, std::placeholders::_1, HELIUMS_MASS, HELIUMS_TEMPERATURE);
+	}
+
+	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
+		: _smallest(smallest), _largest(largest), _processor_count(processor_count)
+	{
+		_count = ceil((pow(SIZE_MOD, 3) / this->_processor_count));
+
+		_electron_pdf = std::bind(pdf, std::placeholders::_1, ELECTRONS_MASS, ELECTRONS_TEMPERATURE);
+		_carbon_pdf = std::bind(pdf, std::placeholders::_1, CARBONS_MASS, CARBONS_TEMPERATURE);
+		_helium_pdf = std::bind(pdf, std::placeholders::_1, HELIUMS_MASS, HELIUMS_TEMPERATURE);
+	}
+
+	void MaxwellParticleDistribution::DistributionElectrons()
+	{
+		std::vector<concurrency::task<std::vector<int>>> tasks_electrons(_processor_count);
+		std::discrete_distribution<> discrete_temp(_largest, 0, _largest, _helium_pdf);
+		concurrency::combinable<std::discrete_distribution<>> discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<>
+		{return discrete_temp; });
+
+		for (size_t i = 0; i < _processor_count; i++)
 		{
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::vector<int> discrete_electrons(_count);
-			std::generate(discrete_electrons.begin(), discrete_electrons.end(), [&]() {return discrete.local()(gen); });
-			return discrete_electrons;
+			tasks_electrons[i] = concurrency::create_task([&, this]() -> std::vector<int>
+			{
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::vector<int> discrete_electrons(_count);
+				std::generate(discrete_electrons.begin(), discrete_electrons.end(), [&]() {return discrete.local()(gen); });
+				return discrete_electrons;
+			});
+		}
+		concurrency::when_all(begin(tasks_electrons), end(tasks_electrons)).then([this](std::vector<int> result)
+		{
+			_electrons = result;
+		}).wait();
+
+	}
+
+	void MaxwellParticleDistribution::DistributionCarbons()
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::discrete_distribution<> discrete(_largest, 0, _largest, _carbon_pdf);
+		int count = SIZE_MOD * SIZE_MOD;
+		for (size_t i = 0; i < count; i++)
+			_carbons.push_back(discrete(gen));
+	}
+
+	void MaxwellParticleDistribution::DistributionHeliums()
+	{
+		std::vector<concurrency::task<std::vector<int>>> tasks_heliums(_processor_count);
+		std::discrete_distribution<> discrete_temp(_largest, 0, _largest, _helium_pdf);
+		concurrency::combinable<std::discrete_distribution<>> discrete = concurrency::combinable<std::discrete_distribution<>>([&]()->std::discrete_distribution<>
+		{return discrete_temp; });
+
+		for (size_t i = 0; i < _processor_count; i++)
+		{
+			tasks_heliums[i] = concurrency::create_task([&, this]() -> std::vector<int>
+			{
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::vector<int> discrete_heliums(_count);
+				std::generate(discrete_heliums.begin(), discrete_heliums.end(), [&]() {return discrete.local()(gen); });
+				return discrete_heliums;
+			});
+		}
+		concurrency::when_all(begin(tasks_heliums), end(tasks_heliums)).then([this](std::vector<int> result)
+		{
+			_heliums = result;
+		}).wait();
+	}
+
+	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_electron()
+	{
+		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _electron_pdf);
+	}
+
+	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_carbon()
+	{
+		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _carbon_pdf);
+	}
+
+	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_helium()
+	{
+		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _helium_pdf);
+	}
+}
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+namespace PerformanceComputing
+{
+	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest)
+		: particle_distribution(std::make_unique<Native::MaxwellParticleDistribution>(smallest, largest))
+	{
+	}
+
+	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
+		: particle_distribution(std::make_unique<Native::MaxwellParticleDistribution>(smallest, largest, processor_count))
+	{
+	}
+
+	Windows::Foundation::IAsyncAction^ MaxwellParticleDistribution::DistributionParticleAsync()
+	{
+		return concurrency::create_async([this]()
+		{ concurrency::parallel_invoke(
+			[this] {this->particle_distribution->DistributionCarbons(); },
+			[this] {this->particle_distribution->DistributionHeliums(); },
+			[this] {this->particle_distribution->DistributionElectrons(); }
+		);
 		});
 	}
-	concurrency::when_all(begin(tasks_electrons), end(tasks_electrons)).then([this](std::vector<int> result)
+
+	Windows::Foundation::IAsyncAction^ MaxwellParticleDistribution::DistributionElectronsAsync()
 	{
-		_electrons = result;
-	}).wait();
-
-}
-
-void Native::MaxwellParticleDistribution::DistributionCarbons()
-{
-	std::function<double(const double)> carbon_pdf(std::bind(pdf, std::placeholders::_1, CARBONS_MASS, CARBONS_TEMPERATURE));
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::discrete_distribution<> discrete(this->_largest, 0, this->_largest, carbon_pdf);
-	int count = 99 * 99;
-	for (size_t i = 0; i < count; i++)
-		_carbons.push_back(discrete(gen));
-}
-
-void Native::MaxwellParticleDistribution::DistributionHeliums()
-{
-	std::function<double(const double)> helium_pdf(std::bind(pdf, std::placeholders::_1, HELIUMS_MASS, HELIUMS_TEMPERATURE));
-	std::vector<concurrency::task<std::vector<int>>> tasks_heliums(_processor_count);
-	std::discrete_distribution<> discrete_temp(this->_largest, 0, this->_largest, helium_pdf);
-	concurrency::combinable<std::discrete_distribution<>> discrete = concurrency::combinable<std::discrete_distribution<>>([&]()->std::discrete_distribution<>
-	{return discrete_temp; });
-
-	for (size_t i = 0; i < _processor_count; i++)
-	{
-		tasks_heliums[i] = concurrency::create_task([&, this]() -> std::vector<int>
+		return concurrency::create_async([this]
 		{
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::vector<int> discrete_heliums(_count);
-			std::generate(discrete_heliums.begin(), discrete_heliums.end(), [&]() {return discrete.local()(gen); });
-			return discrete_heliums;
+			this->particle_distribution->DistributionElectrons();
+			this->_electrons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_electrons));
 		});
 	}
-	concurrency::when_all(begin(tasks_heliums), end(tasks_heliums)).then([this](std::vector<int> result)
+
+	Windows::Foundation::IAsyncAction^ MaxwellParticleDistribution::DistributionCarbonsAsync()
 	{
-		_heliums = result;
-	}).wait();
-}
+		return concurrency::create_async([this]
+		{
+			this->particle_distribution->DistributionCarbons();
+			this->_heliums = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_carbons));
+		});
+	}
 
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-PerformanceComputing::MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest)
-	: particle_distribution(std::make_unique <Native::MaxwellParticleDistribution>(smallest, largest))
-{
-}
-
-PerformanceComputing::MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
-	: particle_distribution(std::make_unique <Native::MaxwellParticleDistribution>(smallest, largest, processor_count))
-{
-}
-
-Windows::Foundation::IAsyncAction^ PerformanceComputing::MaxwellParticleDistribution::DistributionParticleAsync()
-{
-	return concurrency::create_async([this]() { concurrency::parallel_invoke(
-		[this] {this->particle_distribution->DistributionCarbons(); },
-		[this] {this->particle_distribution->DistributionHeliums(); },
-		[this] {this->particle_distribution->DistributionElectrons(); }
-	);
-	});
-}
-
-Windows::Foundation::IAsyncAction^ PerformanceComputing::MaxwellParticleDistribution::DistributionElectronsAsync()
-{
-	return concurrency::create_async([this]
+	Windows::Foundation::IAsyncAction^ MaxwellParticleDistribution::DistributioHeliumsAsync()
 	{
-		this->particle_distribution->DistributionElectrons();
-	});
+		return concurrency::create_async([this]
+		{
+			this->particle_distribution->DistributionHeliums();
+			this->_carbons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_heliums));
+		});
+	}
 }
-
-Windows::Foundation::IAsyncAction^ PerformanceComputing::MaxwellParticleDistribution::DistributionCarbonsAsync()
-{
-	return concurrency::create_async([this]
-	{
-		this->particle_distribution->DistributionCarbons();
-	});
-}
-
-Windows::Foundation::IAsyncAction^ PerformanceComputing::MaxwellParticleDistribution::DistributioHeliumsAsync()
-{
-	return concurrency::create_async([this]
-	{
-		this->particle_distribution->DistributionHeliums();
-	});
-}
-
 //void PerformanceComputing::MaxwellParticleDistribution::DistributionParticle()
 //{
 //	concurrency::parallel_invoke(
