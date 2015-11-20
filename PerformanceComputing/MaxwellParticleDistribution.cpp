@@ -112,24 +112,35 @@ namespace Native
 		}).wait();
 	}
 
-	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_electron()
+	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_electron()
 	{
-		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _electron_pdf);
+		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _electron_pdf);
 	}
 
-	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_carbon()
+	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_carbon()
 	{
-		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _carbon_pdf);
+		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _carbon_pdf);
 	}
 
-	std::unique_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_helium()
+	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_helium()
 	{
-		return std::make_unique<std::discrete_distribution<>>(_largest, 0, _largest, _helium_pdf);
+		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _helium_pdf);
+	}
+
+	int MaxwellParticleDistribution::get_count() const
+	{
+		return _count;
+	}
+	
+	int MaxwellParticleDistribution::get_processor_count() const
+	{
+		return _processor_count;
 	}
 }
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 namespace PerformanceComputing
 {

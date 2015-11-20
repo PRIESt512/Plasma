@@ -24,9 +24,13 @@ namespace Native
 		std::vector<int> _heliums;
 		std::vector<int> _carbons;
 
-		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_electron();
-		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_helium();
-		std::unique_ptr<std::discrete_distribution<>> get_generator_distribution_carbon();
+		int get_processor_count() const;
+		int get_count() const;
+
+	protected:
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_electron();
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_helium();
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_carbon();
 
 	private:
 		std::function<double(const double)> _electron_pdf;

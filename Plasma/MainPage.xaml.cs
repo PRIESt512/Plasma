@@ -40,6 +40,7 @@ namespace Plasma
 
             SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
             await speedParticle.DecompositionSpeedAsync();
+
         }
     }
 

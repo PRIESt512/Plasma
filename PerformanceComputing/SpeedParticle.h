@@ -6,20 +6,21 @@
 
 namespace Native
 {
-	class SpeedParticle
+	class SpeedParticle : protected MaxwellParticleDistribution
 	{
 	public:
 		SpeedParticle(int largest, int smallest);
 		SpeedParticle(int largest, int smallest, int processor_count);
 
-		void DecompositionSpeed();
 		void DecompositionElectrons();
 		void DecompositionCarbons();
 		void DecompositionHeliums();
 
-	private:
-		std::unique_ptr<MaxwellParticleDistribution> _maxwell;
+		std::vector<PerformanceComputing::Particle> _speed_electrons;
+		std::vector<PerformanceComputing::Particle> _speed_carbons;
+		std::vector<PerformanceComputing::Particle> _speed_heliums;
 	};
+
 }
 
 namespace PerformanceComputing
@@ -35,6 +36,9 @@ namespace PerformanceComputing
 		}*/
 
 		Windows::Foundation::IAsyncAction^ DecompositionSpeedAsync();
+		Windows::Foundation::IAsyncAction^ DecompositionSpeedElectronsAsync();
+		Windows::Foundation::IAsyncAction^ DecompositionSpeedCarbonsAsync();
+		Windows::Foundation::IAsyncAction^ DecompositionSpeedHeliumsAsync();
 
 	private:
 		std::unique_ptr<Native::SpeedParticle> _speed;
