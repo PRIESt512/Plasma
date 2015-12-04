@@ -32,14 +32,14 @@ namespace Plasma
         private async void Button_Click(object sender, RoutedEventArgs r)
         {
 
-            //MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
-            //await maxwell.DistributionParticleAsync();
-            //var e = maxwell.Electrons.Count;
-            //var h = maxwell.Heliums.Count;
-            //var c = maxwell.Carbons.Count;
+            MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
+            await maxwell.DistributionCarbonsAsync();
+            var e = maxwell.Electrons.Count;
+            var h = maxwell.Heliums.Count;
+            var c = maxwell.Carbons.Count;
 
-            SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
-            await speedParticle.DecompositionSpeedAsync();
+            //SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
+            //await speedParticle.DecompositionSpeedHeliumsAsync();
 
         }
     }
@@ -58,7 +58,7 @@ namespace Plasma
         void Compare(IList<double> list)
         {
             var column = new ColumnSeries { Title = "Пример", StrokeColor = OxyColors.Black, StrokeThickness = 1 };
-            var count = 0;
+            //var count = 0;
             //for (int i = 0; i < 20; i++)
             //{
             //    column.Items.Add(new ColumnItem { Value = list[count] });

@@ -75,7 +75,6 @@ namespace Native
 		{
 			_electrons = result;
 		}).wait();
-
 	}
 
 	void MaxwellParticleDistribution::DistributionCarbons()
@@ -112,26 +111,26 @@ namespace Native
 		}).wait();
 	}
 
-	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_electron()
+	std::discrete_distribution<>* MaxwellParticleDistribution::get_generator_distribution_electron()
 	{
-		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _electron_pdf);
+		return &std::discrete_distribution<>(_largest, 0, _largest, _electron_pdf);
 	}
 
-	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_carbon()
+	std::discrete_distribution<>* MaxwellParticleDistribution::get_generator_distribution_helium()
 	{
-		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _carbon_pdf);
+		return &std::discrete_distribution<>(_largest, 0, _largest, _helium_pdf);
 	}
 
-	std::shared_ptr<std::discrete_distribution<>> MaxwellParticleDistribution::get_generator_distribution_helium()
+	std::discrete_distribution<>* MaxwellParticleDistribution::get_generator_distribution_carbon()
 	{
-		return std::make_shared<std::discrete_distribution<>>(_largest, 0, _largest, _helium_pdf);
+		return &std::discrete_distribution<>(_largest, 0, _largest, _carbon_pdf);
 	}
 
 	int MaxwellParticleDistribution::get_count() const
 	{
 		return _count;
 	}
-	
+
 	int MaxwellParticleDistribution::get_processor_count() const
 	{
 		return _processor_count;
@@ -145,12 +144,12 @@ namespace Native
 namespace PerformanceComputing
 {
 	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest)
-		: particle_distribution(std::make_unique<Native::MaxwellParticleDistribution>(smallest, largest))
+		: particle_distribution(Native::MaxwellParticleDistribution(smallest, largest))
 	{
 	}
 
 	MaxwellParticleDistribution::MaxwellParticleDistribution(int smallest, int largest, int processor_count)
-		: particle_distribution(std::make_unique<Native::MaxwellParticleDistribution>(smallest, largest, processor_count))
+		: particle_distribution(Native::MaxwellParticleDistribution(smallest, largest, processor_count))
 	{
 	}
 
@@ -158,19 +157,29 @@ namespace PerformanceComputing
 	{
 		return concurrency::create_async([this]()
 		{ concurrency::parallel_invoke(
-			[this] {this->particle_distribution->DistributionCarbons(); },
-			[this] {this->particle_distribution->DistributionHeliums(); },
-			[this] {this->particle_distribution->DistributionElectrons(); }
-		);
-		});
+			[this]
+		{
+			this->particle_distribution.DistributionHeliums();
+			this->_heliums = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._heliums));
+		},
+			[this]
+		{
+			this->particle_distribution.DistributionCarbons();
+			this->_carbons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._carbons));
+		},
+			[this]
+		{
+			this->particle_distribution.DistributionElectrons();
+			this->_electrons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._electrons));
+		}); });
 	}
 
 	Windows::Foundation::IAsyncAction^ MaxwellParticleDistribution::DistributionElectronsAsync()
 	{
 		return concurrency::create_async([this]
 		{
-			this->particle_distribution->DistributionElectrons();
-			this->_electrons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_electrons));
+			this->particle_distribution.DistributionElectrons();
+			this->_electrons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._electrons));
 		});
 	}
 
@@ -178,8 +187,8 @@ namespace PerformanceComputing
 	{
 		return concurrency::create_async([this]
 		{
-			this->particle_distribution->DistributionCarbons();
-			this->_heliums = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_carbons));
+			this->particle_distribution.DistributionCarbons();
+			this->_carbons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._carbons));
 		});
 	}
 
@@ -187,8 +196,8 @@ namespace PerformanceComputing
 	{
 		return concurrency::create_async([this]
 		{
-			this->particle_distribution->DistributionHeliums();
-			this->_carbons = ref new Platform::Collections::Vector<int>(std::move(particle_distribution->_heliums));
+			this->particle_distribution.DistributionHeliums();
+			this->_heliums = ref new Platform::Collections::Vector<int>(std::move(particle_distribution._heliums));
 		});
 	}
 }

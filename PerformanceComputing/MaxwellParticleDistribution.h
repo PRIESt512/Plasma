@@ -28,9 +28,9 @@ namespace Native
 		int get_count() const;
 
 	protected:
-		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_electron();
-		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_helium();
-		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_carbon();
+		std::discrete_distribution<>* get_generator_distribution_electron();
+		std::discrete_distribution<>* get_generator_distribution_helium();
+		std::discrete_distribution<>* get_generator_distribution_carbon();
 
 	private:
 		std::function<double(const double)> _electron_pdf;
@@ -46,7 +46,7 @@ namespace Native
 
 namespace PerformanceComputing
 {
-	//Управляемая оболочка для нативного класса С++/СХ, позволяет взаимодействовать C# с неуправляемым кодом 
+	//Управляемая оболочка С++/СХ для нативного класса C++, позволяет взаимодействовать C# с нативным кодом в управляемой среде 
 	public ref class MaxwellParticleDistribution sealed
 	{
 	public:
@@ -62,14 +62,14 @@ namespace PerformanceComputing
 			Windows::Foundation::Collections::IVector<int>^ get() { return _electrons; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Heliums {
-			Windows::Foundation::Collections::IVector<int>^ get() { return _carbons; }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _heliums; }
 		}
 		property Windows::Foundation::Collections::IVector<int>^ Carbons {
-			Windows::Foundation::Collections::IVector<int>^ get() { return _heliums; }
+			Windows::Foundation::Collections::IVector<int>^ get() { return _carbons; }
 		}
 
 	private:
-		std::unique_ptr<Native::MaxwellParticleDistribution> particle_distribution;
+		Native::MaxwellParticleDistribution particle_distribution;
 		Platform::Collections::Vector<int>^ _electrons;
 		Platform::Collections::Vector<int>^ _heliums;
 		Platform::Collections::Vector<int>^ _carbons;

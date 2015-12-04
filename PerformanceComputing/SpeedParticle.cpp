@@ -20,7 +20,7 @@ namespace Native
 		auto sigma = M_PI / 30;
 
 		std::normal_distribution<> normal_temp(mu, sigma);
-		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle>>> tasks_decomposition_electrons(processor_count);
+		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle*>>> tasks_decomposition_electrons(processor_count);
 
 		auto discrete_temp = *this->get_generator_distribution_electron();
 		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return discrete_temp; });
@@ -28,27 +28,28 @@ namespace Native
 
 		for (size_t i = 0; i < processor_count; i++)
 		{
-			tasks_decomposition_electrons[i] = concurrency::create_task([&, this]() -> std::vector<PerformanceComputing::Particle>
+			tasks_decomposition_electrons[i] = concurrency::create_task([&, this]() -> std::vector<PerformanceComputing::Particle*>
 			{
-				std::vector<PerformanceComputing::Particle> speed_particle(count);
-				std::mt19937 gen;
-				std::generate(speed_particle.begin(), speed_particle.end(), [&]() -> PerformanceComputing::Particle
+				std::vector<PerformanceComputing::Particle*> speed_particle(count);
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::generate(speed_particle.begin(), speed_particle.end(), [&]() -> PerformanceComputing::Particle*
 				{
-					PerformanceComputing::Particle p;
+					auto p = new PerformanceComputing::Particle();
 					auto speed = discrete.local()(gen) / ELECTRON_SPEED_DIMENSIONLESS_UNIT;
 					auto angle = normal.local()(gen);
 					auto angle2 = normal.local()(gen) + M_PI / 2;
 					auto temp_cos = cos(angle);
 
-					p.Vx = speed * temp_cos;
-					p.Vy = speed * cos(angle2);
-					p.Vz = sqrt(abs(pow(p.Vx / temp_cos, 2) - p.Vx*p.Vx - p.Vy*p.Vy));
+					p->Vx = speed * temp_cos;
+					p->Vy = speed * cos(angle2);
+					p->Vz = sqrt(abs(pow(p->Vx / temp_cos, 2) - p->Vx*p->Vx - p->Vy*p->Vy));
 					return p;
 				});
 				return speed_particle;
 			});
 		}
-		concurrency::when_all(begin(tasks_decomposition_electrons), end(tasks_decomposition_electrons)).then([this](std::vector<PerformanceComputing::Particle> result)
+		concurrency::when_all(begin(tasks_decomposition_electrons), end(tasks_decomposition_electrons)).then([this](std::vector<PerformanceComputing::Particle*>& result)
 		{
 			_speed_electrons = result;
 		}).wait();
@@ -67,15 +68,15 @@ namespace Native
 
 		for (size_t i = 0; i < count; i++)
 		{
-			PerformanceComputing::Particle p;
+			auto p = new PerformanceComputing::Particle();
 			auto speed = discrete(gen) / CARBON_SPEED_DIMENSIONLESS_UNIT;
 			auto angle = normal(gen);
 			auto angle2 = normal(gen) + M_PI / 2;
 			auto temp_cos = cos(angle);
 
-			p.Vx = speed * temp_cos;
-			p.Vy = speed * cos(angle2);
-			p.Vz = sqrt(abs(pow(p.Vx / temp_cos, 2) - p.Vx*p.Vx - p.Vy*p.Vy));
+			p->Vx = speed * temp_cos;
+			p->Vy = speed * cos(angle2);
+			p->Vz = sqrt(abs(pow(p->Vx / temp_cos, 2) - p->Vx*p->Vx - p->Vy*p->Vy));
 			_speed_carbons.push_back(p);
 		}
 	}
@@ -88,7 +89,7 @@ namespace Native
 		auto sigma = M_PI / 30;
 
 		std::normal_distribution<> normal_temp(mu, sigma);
-		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle>>> tasks_decomposition_heliums(processor_count);
+		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle*>>> tasks_decomposition_heliums(processor_count);
 
 		auto discrete_temp = *this->get_generator_distribution_helium();
 		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return discrete_temp; });
@@ -96,27 +97,27 @@ namespace Native
 
 		for (size_t i = 0; i < processor_count; i++)
 		{
-			tasks_decomposition_heliums[i] = concurrency::create_task([&, this]() -> std::vector<PerformanceComputing::Particle>
+			tasks_decomposition_heliums[i] = concurrency::create_task([&, this]() -> const std::vector<PerformanceComputing::Particle*>
 			{
-				std::vector<PerformanceComputing::Particle> speed_particle(count);
+				std::vector<PerformanceComputing::Particle*> speed_particle(count);
 				std::mt19937 gen;
-				std::generate(speed_particle.begin(), speed_particle.end(), [&]() -> PerformanceComputing::Particle
+				std::generate(speed_particle.begin(), speed_particle.end(), [&]() -> PerformanceComputing::Particle*
 				{
-					PerformanceComputing::Particle p;
-					auto speed = discrete.local()(gen) / HELLIUM_SPEED_DIMENSIONLESS_UNIT;
+					auto p = new PerformanceComputing::Particle();
+					auto speed = discrete.local()(gen) / ELECTRON_SPEED_DIMENSIONLESS_UNIT;
 					auto angle = normal.local()(gen);
 					auto angle2 = normal.local()(gen) + M_PI / 2;
 					auto temp_cos = cos(angle);
 
-					p.Vx = speed * temp_cos;
-					p.Vy = speed * cos(angle2);
-					p.Vz = sqrt(abs(pow(p.Vx / temp_cos, 2) - p.Vx*p.Vx - p.Vy*p.Vy));
+					p->Vx = speed * temp_cos;
+					p->Vy = speed * cos(angle2);
+					p->Vz = sqrt(abs(pow(p->Vx / temp_cos, 2) - p->Vx*p->Vx - p->Vy*p->Vy));
 					return p;
 				});
 				return speed_particle;
 			});
 		}
-		concurrency::when_all(begin(tasks_decomposition_heliums), end(tasks_decomposition_heliums)).then([this](std::vector<PerformanceComputing::Particle> result)
+		concurrency::when_all(begin(tasks_decomposition_heliums), end(tasks_decomposition_heliums)).then([this](const std::vector<PerformanceComputing::Particle*> &result)
 		{
 			_speed_heliums = result;
 		}).wait();
@@ -130,11 +131,11 @@ namespace Native
 namespace PerformanceComputing
 {
 
-	SpeedParticle::SpeedParticle(int largest, int smallest) : _speed(std::make_unique<Native::SpeedParticle>(largest, smallest))
+	SpeedParticle::SpeedParticle(int largest, int smallest) : _speed(new Native::SpeedParticle(largest, smallest))
 	{
 	}
 
-	SpeedParticle::SpeedParticle(int largest, int smallest, int processor_count) : _speed(std::make_unique<Native::SpeedParticle>(largest, smallest, processor_count))
+	SpeedParticle::SpeedParticle(int largest, int smallest, int processor_count) : _speed(new Native::SpeedParticle(largest, smallest, processor_count))
 	{
 	}
 

@@ -16,9 +16,9 @@ namespace Native
 		void DecompositionCarbons();
 		void DecompositionHeliums();
 
-		std::vector<PerformanceComputing::Particle> _speed_electrons;
-		std::vector<PerformanceComputing::Particle> _speed_carbons;
-		std::vector<PerformanceComputing::Particle> _speed_heliums;
+		std::vector<PerformanceComputing::Particle*> _speed_electrons;
+		std::vector<PerformanceComputing::Particle*> _speed_carbons;
+		std::vector<PerformanceComputing::Particle*> _speed_heliums;
 	};
 
 }
@@ -41,7 +41,7 @@ namespace PerformanceComputing
 		Windows::Foundation::IAsyncAction^ DecompositionSpeedHeliumsAsync();
 
 	private:
-		std::unique_ptr<Native::SpeedParticle> _speed;
+		Native::SpeedParticle* _speed;
 
 		//Platform::Collections::Vector<Particle, equal_particle> _speedParticle;
 	};

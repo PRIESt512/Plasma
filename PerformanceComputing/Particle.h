@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+
 namespace PerformanceComputing
 {
 	value struct Particle
