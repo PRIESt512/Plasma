@@ -22,8 +22,8 @@ namespace Native
 		std::normal_distribution<> normal_temp(mu, sigma);
 		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle*>>> tasks_decomposition_electrons(processor_count);
 
-		auto discrete_temp = *this->get_generator_distribution_electron();
-		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return discrete_temp; });
+		auto discrete_temp = this->get_generator_distribution_electron();
+		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return *discrete_temp; });
 		auto normal = concurrency::combinable<std::normal_distribution<>>([&]() -> std::normal_distribution<> {return normal_temp; });
 
 		for (size_t i = 0; i < processor_count; i++)
@@ -57,7 +57,7 @@ namespace Native
 
 	void SpeedParticle::DecompositionCarbons()
 	{
-		auto discrete = *this->get_generator_distribution_carbon();
+		auto discrete = this->get_generator_distribution_carbon();
 
 		auto mu = 0;
 		auto sigma = M_PI / 30;
@@ -69,7 +69,7 @@ namespace Native
 		for (size_t i = 0; i < count; i++)
 		{
 			auto p = new PerformanceComputing::Particle();
-			auto speed = discrete(gen) / CARBON_SPEED_DIMENSIONLESS_UNIT;
+			auto speed = (*discrete)(gen) / CARBON_SPEED_DIMENSIONLESS_UNIT;
 			auto angle = normal(gen);
 			auto angle2 = normal(gen) + M_PI / 2;
 			auto temp_cos = cos(angle);
@@ -91,8 +91,8 @@ namespace Native
 		std::normal_distribution<> normal_temp(mu, sigma);
 		std::vector<concurrency::task<std::vector<PerformanceComputing::Particle*>>> tasks_decomposition_heliums(processor_count);
 
-		auto discrete_temp = *this->get_generator_distribution_helium();
-		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return discrete_temp; });
+		auto discrete_temp = this->get_generator_distribution_helium();
+		auto discrete = concurrency::combinable<std::discrete_distribution<>>([&]()-> std::discrete_distribution<> {return *discrete_temp; });
 		auto normal = concurrency::combinable<std::normal_distribution<>>([&]() -> std::normal_distribution<> {return normal_temp; });
 
 		for (size_t i = 0; i < processor_count; i++)

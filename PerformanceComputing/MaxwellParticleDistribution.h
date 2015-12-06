@@ -28,9 +28,9 @@ namespace Native
 		int get_count() const;
 
 	protected:
-		std::discrete_distribution<>* get_generator_distribution_electron();
-		std::discrete_distribution<>* get_generator_distribution_helium();
-		std::discrete_distribution<>* get_generator_distribution_carbon();
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_electron();
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_helium();
+		std::shared_ptr<std::discrete_distribution<>> get_generator_distribution_carbon();
 
 	private:
 		std::function<double(const double)> _electron_pdf;

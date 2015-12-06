@@ -31,15 +31,14 @@ namespace Plasma
 
         private async void Button_Click(object sender, RoutedEventArgs r)
         {
+            //MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
+            //await maxwell.DistributionParticleAsync();
+            //var e = maxwell.Electrons.Count;
+            //var h = maxwell.Heliums.Count;
+            //var c = maxwell.Carbons.Count;
 
-            MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
-            await maxwell.DistributionCarbonsAsync();
-            var e = maxwell.Electrons.Count;
-            var h = maxwell.Heliums.Count;
-            var c = maxwell.Carbons.Count;
-
-            //SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
-            //await speedParticle.DecompositionSpeedHeliumsAsync();
+            SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
+            await speedParticle.DecompositionSpeedAsync();
 
         }
     }
