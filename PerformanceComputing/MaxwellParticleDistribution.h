@@ -13,12 +13,16 @@ namespace Native
 	class MaxwellParticleDistribution
 	{
 	public:
-		MaxwellParticleDistribution(int largest, int smallest);
-		MaxwellParticleDistribution(int largest, int smallest, int processor_count);
+		MaxwellParticleDistribution(int smallest, int largest);
+		MaxwellParticleDistribution(int smallest, int largest, int processor_count);
 
 		void DistributionElectrons();
 		void DistributionCarbons();
 		void DistributionHeliums();
+
+		std::vector<double> pdf_electrons();
+		std::vector<double> pdf_carbons();
+		std::vector<double> pdf_heliums();
 
 		std::vector<int> _electrons;
 		std::vector<int> _heliums;
@@ -57,6 +61,10 @@ namespace PerformanceComputing
 		Windows::Foundation::IAsyncAction^ DistributionElectronsAsync();
 		Windows::Foundation::IAsyncAction^ DistributionCarbonsAsync();
 		Windows::Foundation::IAsyncAction^ DistributioHeliumsAsync();
+
+		Windows::Foundation::Collections::IVector<double>^ ElectronsPdf();
+		Windows::Foundation::Collections::IVector<double>^ CarbonsPdf();
+		Windows::Foundation::Collections::IVector<double>^ HeliumsPdf();
 
 		property Windows::Foundation::Collections::IVector<int>^ Electrons {
 			Windows::Foundation::Collections::IVector<int>^ get() { return _electrons; }

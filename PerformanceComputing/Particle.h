@@ -3,7 +3,7 @@
 
 namespace PerformanceComputing
 {
-	value struct Particle
+	public value struct Particle
 	{
 		int x;
 		int y;
@@ -13,12 +13,12 @@ namespace PerformanceComputing
 		double Vz;
 	};
 
-	struct equal_particle
+	struct MyEqual : public std::binary_function<const Particle, const Particle, bool>
 	{
-		bool operator()(const Particle& p1, const Particle& p2) const
+		bool operator()(const Particle& _Left, const Particle& _Right)
 		{
-			return p1.x == p2.x;
-		}
+			return _Left.x == _Right.x;
+		};
 	};
 }
 

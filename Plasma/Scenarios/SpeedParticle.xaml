@@ -1,0 +1,91 @@
+﻿<Page
+    x:Class="Plasma.Scenarios.SpeedParticle"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Plasma.Scenarios"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:windows="using:OxyPlot.Windows"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Pivot x:Name="Speed" Margin="0,30,0,0" >
+            <Pivot.RightHeader>
+                <CommandBar ClosedDisplayMode="Compact" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <AppBarButton x:Name="Save" Label="Сохранить" Click="Save_Click">
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Save" ></SymbolIcon>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                    <AppBarButton Label="Редактирование" >
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Edit"/>
+                        </AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <Flyout>
+                                <StackPanel>
+                                    <TextBlock Text="Температура процесса" />
+                                    <TextBox x:Name="Temperature" Margin="0,5,0,0" />
+                                    <MenuFlyoutSeparator Margin="0,5,0,0" />
+                                    <TextBlock Text="Переход к безразмерным величинам" />
+                                    <ToggleButton x:Name="Dimensionless" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+                                    <MenuFlyoutSeparator />
+                                    <TextBlock Text="Вид скорости" VerticalAlignment="Top" HorizontalAlignment="Center" />
+                                    <ComboBox x:Name="ViewSpeed" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="0,5,0,0" >
+                                        <TextBlock>Общая</TextBlock>
+                                        <TextBlock>По проекциям</TextBlock>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                    <AppBarButton x:Name="CompareSpeed" Label="Рассчитать" Click="CompareSpeed_Click">
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Sync"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                </CommandBar>
+            </Pivot.RightHeader>
+            <PivotItem Header="Электрон">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <windows:PlotView x:Name="ElectronPlot"/>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Углерод">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <windows:PlotView x:Name="CarbonPlot"/>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Гелий">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <windows:PlotView x:Name="HeliumPlot"/>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Все частицы">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="315*"/>
+                        <ColumnDefinition Width="315*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="54*"/>
+                        <RowDefinition Height="54*"/>
+                    </Grid.RowDefinitions>
+                    <windows:PlotView x:Name="ElectronPlot2" Grid.ColumnSpan="2"  />
+                    <windows:PlotView x:Name="CarbonPlot2" Grid.Column="1" Grid.Row="1" />
+                    <windows:PlotView x:Name="HeliumPlot2" Grid.Column="0" Grid.Row="1" />
+                </Grid>
+            </PivotItem>
+        </Pivot>
+        <TextBlock x:Name="ParticleSpeed" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="29.333"/>
+    </Grid>
+</Page>

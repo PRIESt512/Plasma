@@ -8,20 +8,37 @@
     xmlns:oxy="using:OxyPlot.Windows"
     mc:Ignorable="d">
 
-    <Page.DataContext>
+    <!--<Page.DataContext>
         <local:MainViewModel/>
-    </Page.DataContext>
+    </Page.DataContext>-->
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--<ListView x:Name="ListView" VerticalAlignment="Top" HorizontalAlignment="Center">
             <DataTemplate>
                 <TextBlock>
-
                 </TextBlock>
             </DataTemplate>
         </ListView>-->
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Content="Рассчитать" Click="Button_Click">
-        </Button>
-        <!--<oxy:PlotView Model="{Binding MyModel}"></oxy:PlotView>-->
+        <SplitView x:Name="MySplitPanel" DisplayMode="CompactOverlay" CompactPaneLength="50">
+            <SplitView.Pane>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel>
+                        <Button x:Name="Hamburger" Content="" FontFamily="Segoe MDL2 Assets" Background="Transparent" Click="Hamburger_Click" Width="50" Height="40" />
+                        <StackPanel Orientation="Horizontal" BorderThickness="0,15,0,0">
+                            <Button x:Name="DistributionMaxwell" Content="" FontFamily="Segoe MDL2 Assets" Background="Transparent" Width="50" Height="40" Click="DistributionMaxwell_Click" />
+                            <TextBlock Text="Распределение Максвелла"  FontSize="18" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="SpeedParticle" Content=""  FontFamily="Segoe MDL2 Assets" Background="Transparent" Width="50" Height="40" Click="SpeedParticle_Click" />
+                            <TextBlock Text="Распределение скорости" FontSize="18" VerticalAlignment="Center" />
+                            <TextBlock />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Frame x:Name="ScenarioFrame" />
+            </SplitView.Content>
+        </SplitView>
     </Grid>
 </Page>

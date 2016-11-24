@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using OxyPlot;
 using OxyPlot.Series;
 using PerformanceComputing;
+using Plasma.Scenarios;
+using SpeedParticle = Plasma.Scenarios.SpeedParticle;
+
 // Документацию по шаблону элемента "Пустая страница" см. по адресу http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace Plasma
@@ -29,17 +22,36 @@ namespace Plasma
             this.InitializeComponent();
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs r)
+        private void Hamburger_Click(object sender, RoutedEventArgs e)
         {
-            //MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 7000, Environment.ProcessorCount);
-            //await maxwell.DistributionParticleAsync();
-            //var e = maxwell.Electrons.Count;
-            //var h = maxwell.Heliums.Count;
-            //var c = maxwell.Carbons.Count;
+            MySplitPanel.IsPaneOpen = !MySplitPanel.IsPaneOpen;
+        }
 
-            SpeedParticle speedParticle = new SpeedParticle(0, 7000, Environment.ProcessorCount);
-            await speedParticle.DecompositionSpeedAsync();
+        public List<Scenario> Scenarios { get; } = new List<Scenario>
+        {
+            new Scenario() { Title="DistributionMaxwell", ClassType=typeof(DistributionMaxwell)},
+            new Scenario() { Title="SpeedParticle", ClassType=typeof(SpeedParticle)},
+        };
 
+        private void DistributionMaxwell_Click(object sender, RoutedEventArgs e)
+        {
+            var source = ((Button)e.OriginalSource).Name;
+            Navigate(source);
+        }
+
+        private void SpeedParticle_Click(object sender, RoutedEventArgs e)
+        {
+            var source = ((Button)e.OriginalSource).Name;
+            Navigate(source);
+        }
+
+        private void Navigate(String source)
+        {
+            var s = Scenarios.Find((Scenario item) => item.Title == source);
+            if (s != null)
+            {
+                ScenarioFrame.Navigate(s.ClassType);
+            }
         }
     }
 

@@ -1,0 +1,105 @@
+﻿<Page
+    x:Class="Plasma.Scenarios.DistributionMaxwell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Plasma.Scenarios"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:oxyWindows="using:OxyPlot.Windows"
+    xmlns:oxyAxes="using:OxyPlot.Axes"
+    xmlns:oxySeries="using:OxyPlot.Series"
+    
+    
+    mc:Ignorable="d">
+
+    <!--<Page.DataContext>
+        <local:ElectronModel/>
+    </Page.DataContext>-->
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Pivot x:Name="PivotMaxwell" Margin="0,30,0,0" >
+            <Pivot.RightHeader>
+                <CommandBar ClosedDisplayMode="Compact" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <AppBarButton x:Name="Save" Label="Сохранить" Click="Save_Click">
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Save" ></SymbolIcon>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                    <AppBarButton Label="Редактирование" >
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Edit"/>
+                        </AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <Flyout>
+                                <StackPanel>
+                                    <TextBlock Text="Температура процесса" />
+                                    <TextBox x:Name="Temperature" Margin="0,5,0,0" Text="4200" />
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                    <AppBarButton x:Name="ComparePdf" Label="Рассчитать" Click="ComparePdf_Click">
+                        <AppBarButton.Icon>
+                            <SymbolIcon Symbol="Sync"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator/>
+                </CommandBar>
+            </Pivot.RightHeader>
+            <PivotItem Header="Электрон">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <oxyWindows:PlotView x:Name="ElectronPlot" Height="550" VerticalAlignment="Top"/>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Углерод">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <oxyWindows:PlotView x:Name="CarbonPlot" Height="550" VerticalAlignment="Top"/>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Гелий">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <oxyWindows:PlotView x:Name="HeliumPlot" Height="550" VerticalAlignment="Top">
+                        </oxyWindows:PlotView>
+                        <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <TextBlock Text="T °C:" Style="{StaticResource BaseTextBlockStyle }" FontSize="20" />
+                            <TextBox x:Name="Temperature" BorderThickness="1"  />
+                        </StackPanel>-->
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Все частицы">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="315*"/>
+                        <ColumnDefinition Width="315*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="54*"/>
+                        <RowDefinition Height="54*"/>
+                    </Grid.RowDefinitions>
+                    <oxyWindows:PlotView x:Name="ElectronPlot2" Grid.ColumnSpan="2"  />
+                    <oxyWindows:PlotView x:Name="CarbonPlot2" Grid.Column="1" Grid.Row="1" />
+                    <oxyWindows:PlotView x:Name="HeliumPlot2" Grid.Column="0" Grid.Row="1" />
+                </Grid>
+            </PivotItem>
+        </Pivot>
+        <!--<ScrollViewer>
+            <Grid>
+                <windows:PlotView x:Name="ElectronPlot"  Height="600" VerticalAlignment="Top"/>
+                <windows:PlotView x:Name="CarbonPlot"  Height="600" VerticalAlignment="Top" Margin="0,640,0,0"/>
+                <Button x:Name="ComparePdfCarbon"  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1250,0,0" Click="ComparePdfCarbon_Click" >Рассчитать распределение карбона</Button>
+                <windows:PlotView x:Name="HeliumPlot"  Height="600" VerticalAlignment="Top" Margin="0,1280,0,0" />
+                <Button x:Name="ComparePdfHelium"  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1860,0,0" Click="ComparePdfHelium_Click" >Рассчитать распределение гелия</Button>
+            </Grid>
+        </ScrollViewer>-->
+        <TextBlock x:Name="DistrMaxwell" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="29.333"/>
+
+    </Grid>
+</Page>

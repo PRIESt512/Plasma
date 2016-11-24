@@ -7,7 +7,7 @@ constexpr int SIZE_MOD = 99;
 // Постоянная Больцмана (kb)
 constexpr double BOLTZMANN_CONSTANT = 1.380648813E-23;
 
-// Постоянная Больцмана (kb)
+// Постоянная Авогадро (kb)
 constexpr double AVOGADRO_CONSTANT = 6.0221412927E+23;
 
 // Число частиц в ячейке
@@ -16,9 +16,9 @@ constexpr double CARBONS_NUMBER = 1E+12;
 constexpr double HELIUMS_NUMBER = 1E+6;
 
 // Массы частиц
-constexpr double ELECTRONS_MASS = 9.11E-31;
-constexpr double CARBONS_MASS = 12.011 * 1.67E-27 - 9.11E-31;
-constexpr double HELIUMS_MASS = 4.002 * 1.67E-27 - 9.11E-31;
+constexpr double ELECTRONS_MASS = 9.10938356E-31;
+constexpr double CARBONS_MASS = 12.011 * 1.67E-27 - 9.10938356E-31;
+constexpr double HELIUMS_MASS = 4.002 * 1.67E-27 - 9.10938356E-31;
 
 // Заряды частиц
 constexpr double ELECTRONS_CHARGE = -1.602176565E-19;
@@ -34,7 +34,6 @@ constexpr double HELIUMS_RADIUS = 31E-12;
 constexpr double ANODE_BURNING_SPEED = 0.44E-5;
 
 // Температура процесса и частиц
-constexpr int TEMPERATURE = 10000;
 constexpr int ELECTRONS_TEMPERATURE = 4200;
 constexpr int CARBONS_TEMPERATURE = 4200;
 constexpr int HELIUMS_TEMPERATURE = 293;
