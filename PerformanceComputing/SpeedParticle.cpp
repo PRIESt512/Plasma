@@ -92,13 +92,13 @@ namespace Native
 		auto mu = 0;
 		auto sigma = M_PI / 30;
 		std::mt19937 gen;
-		std::normal_distribution<> normal(mu, sigma);
+		std::normal_distribution<> normal(0, sigma);
 
 		auto dimensionless = 1.0;
 		if (DIMENSIONLESS)
 			dimensionless = CARBON_SPEED_DIMENSIONLESS_UNIT;
 
-		auto count = SIZE_MOD * SIZE_MOD;
+		auto count = SIZE_MOD*SIZE_MOD;
 
 		for (size_t i = 0; i < count; i++)
 		{

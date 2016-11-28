@@ -7,6 +7,7 @@ using OxyPlot.Series;
 using System.Collections.Generic;
 using System.Text;
 using PerformanceComputing;
+using System.Diagnostics;
 
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -145,10 +146,14 @@ namespace Plasma.Scenarios
 
             if (selectedItem != null && selectedItem.Equals("Общая"))
             {
+                Stopwatch st = new Stopwatch();
+                st.Start();
                 await
                     sp.DecompositionSpeedCarbonsAsync(Dimensionless.IsChecked != null && (bool)Dimensionless.IsChecked);
-
+                st.Stop();
                 var speed = new List<Particle>(sp.CarbonsDecompositionSpeed);
+
+                Compare(speed);
 
                 var savePicker = new Windows.Storage.Pickers.FileSavePicker();
                 savePicker.SuggestedStartLocation =
@@ -160,14 +165,21 @@ namespace Plasma.Scenarios
                 Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    StringBuilder text = new StringBuilder();
+                    //StringBuilder text = new StringBuilder();
 
-                    foreach (var particle in speed)
-                    {
-                        text.AppendLine(particle.Vx.ToString());
-                        text.AppendLine(particle.Vy.ToString());
-                        text.AppendLine(particle.Vz.ToString());
-                    }
+                    //foreach (var particle in speed)
+                    //{
+                    //    text.AppendLine(particle.Vx.ToString());
+                    //    text.AppendLine(particle.Vy.ToString());
+                    //    text.AppendLine(particle.Vz.ToString());
+                    //}
+
+                    StringBuilder text = new StringBuilder();
+                    text.AppendLine(st.ElapsedMilliseconds.ToString());
+                    text.AppendLine(speed[0].x.ToString());
+                    text.AppendLine(speed[0].y.ToString());
+                    text.AppendLine(speed[0].z.ToString());
+
 
                     await Windows.Storage.FileIO.WriteTextAsync(file, text.ToString());
 
@@ -222,6 +234,41 @@ namespace Plasma.Scenarios
 
             }
             return plotModel;
+        }
+
+        private async void Compare(List<Particle> speed)
+        {
+            var fullSpeed = new List<double>();
+            speed.ForEach(p => fullSpeed.Add(p.Vx * p.Vx + p.Vy * p.Vy + p.Vz * p.Vz));
+            fullSpeed.Sort();
+
+            var h = (fullSpeed[fullSpeed.Count - 1] - fullSpeed[0]) / 100;
+            var _sp = new List<Double>();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var Ai = fullSpeed[0] + ((i + 1) - 1) * h;
+                var Bi = fullSpeed[0] + ((i + 2) - 1) * h;
+                _sp.Add(fullSpeed.FindAll(x => x > Ai && x < Bi).Count);
+            }
+
+            MaxwellParticleDistribution maxwell = new MaxwellParticleDistribution(0, 1100000, 4);
+
+            await maxwell.DistributionCarbonsAsync();
+
+            var maxwellSpeed = new List<int>(maxwell.Carbons);
+
+            var n = new List<double>();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var sp = Math.Pow(_sp[i] - 100 * maxwellSpeed[i], 2) / 100 * maxwellSpeed[i] * (1 - maxwellSpeed[i]);
+                n.Add(sp);
+            }
+
+            double sum = 0;
+            n.ForEach(p => sum += p);
+
         }
 
         private async Task<PlotModel> CompareSpeedElectron(Double step)

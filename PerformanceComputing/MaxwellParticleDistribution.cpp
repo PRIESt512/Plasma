@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿	#include "pch.h"
 #include "MaxwellParticleDistribution.h"
 
 
@@ -83,7 +83,7 @@ namespace Native
 		std::mt19937 gen(rd());
 		std::discrete_distribution<> discrete(_largest, 0, _largest, _carbon_pdf);
 		int count = SIZE_MOD * SIZE_MOD;
-		for (size_t i = 0; i < count; i++)
+		for (size_t i = 0; i < 100; i++)
 			_carbons.push_back(discrete(gen));
 	}
 
